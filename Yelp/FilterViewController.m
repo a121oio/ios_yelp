@@ -67,6 +67,7 @@
                          ];
         self.expanded = [[NSMutableDictionary alloc] init];
         self.categorySelection = [[NSMutableArray alloc] init];
+        self.filters = [[NSMutableDictionary alloc] init];
     }
     return self;
     
@@ -74,8 +75,6 @@
 }
 
 -(void)viewDidAppear:(BOOL)animated {
-    NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
-    self.filters = [[store objectForKey:@"savedFilters"] mutableCopy];
     
     if (self.filters == nil) {
         self.filters = [NSMutableDictionary dictionary];
@@ -100,10 +99,10 @@
                                      target:self
                                      action:@selector(cancel)];
     UIBarButtonItem *searchButton = [[UIBarButtonItem alloc]
-                                     initWithTitle:@"Search"
+                                     initWithTitle:@"Apply"
                                      style:UIBarButtonItemStyleBordered
                                      target:self
-                                     action:@selector(cancel)];
+                                     action:@selector(onApplyButton)];
     self.navigationController.navigationBar.barTintColor = [UIColor redColor];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
@@ -281,12 +280,12 @@
     // Record selection only when it's already expanded
     if (sectionExpanded) {
         if ([filterGroup[@"type"] isEqual: @"single"]) {
-            self.filters[filterGroup[@"key"]] = currentRowOption[@"value"];
+            [self.filters setObject: currentRowOption[@"value"] forKey:filterGroup[@"key"]];
         } else if ([filterGroup[@"type"] isEqual: @"multiple"]) {
-            if ([self.categorySelection containsObject:currentRowOption[@"value"]]) {
-                [self.categorySelection removeObject:currentRowOption[@"value"]];
+            if ([self.categorySelection containsObject:currentRowOption[@"code"]]) {
+                [self.categorySelection removeObject:currentRowOption[@"code"]];
             } else {
-                [self.categorySelection addObject:currentRowOption[@"value"]];
+                [self.categorySelection addObject:currentRowOption[@"code"]];
             }
         }
     }
@@ -321,21 +320,21 @@
 }
 */
 
--(NSDictionary *) filters{
-    NSMutableDictionary *filters = [NSMutableDictionary dictionary];
-    if (self.selectedCategories.count > 0){
-        NSMutableArray *names = [NSMutableArray array];
-        for (NSDictionary *category in self.selectedCategories){
-            [names addObject:category[@"code"]];
-            
-        }
-        NSString *categoryFilter = [names componentsJoinedByString:@","];
-        [filters setObject:categoryFilter forKey:@"category_filter"];
-        
-    }
-    
-    return filters;
-}
+//-(NSDictionary *) filters{
+//    NSMutableDictionary *filters = [NSMutableDictionary dictionary];
+//    if (self.selectedCategories.count > 0){
+//        NSMutableArray *names = [NSMutableArray array];
+//        for (NSDictionary *category in self.selectedCategories){
+//            [names addObject:category[@"code"]];
+//            
+//        }
+//        NSString *categoryFilter = [names componentsJoinedByString:@","];
+//        [filters setObject:categoryFilter forKey:@"category_filter"];
+//        
+//    }
+//    
+//    return filters;
+//}
 
 - (void) onCancelButton {
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -343,8 +342,19 @@
 }
 
 -(void) onApplyButton{
+    NSMutableDictionary *filters = [NSMutableDictionary dictionary];
+    if (self.categorySelection.count > 0){
+        NSMutableArray *names = [NSMutableArray array];
+        for (NSString *category in self.categorySelection){
+            [names addObject:category];
     
-    [self.delegate filtersViewController:self didChangeFilters:self.filters];
+        }
+        NSString *categoryFilter = [names componentsJoinedByString:@","];
+        [filters setObject:categoryFilter forKey:@"category_filter"];
+            
+    }
+
+    [self.delegate filtersViewController:self didChangeFilters:filters];
     
     [self dismissViewControllerAnimated:YES completion:nil];
     
