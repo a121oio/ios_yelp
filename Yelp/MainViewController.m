@@ -21,7 +21,7 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 
 
 @property (weak, nonatomic) IBOutlet UITableView *myTableView;
-
+@property (nonatomic, strong) UISearchBar *vb;
 @property (nonatomic, strong) YelpClient *client;
 @property (nonatomic,strong) NSArray *businesses;
 
@@ -59,9 +59,11 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
     self.navigationController.navigationBar.barTintColor = [UIColor redColor];
     self.navigationController.navigationBar.translucent = NO;
     
-
+    
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStylePlain target:self action:@selector(onFilterButton)];
-    self.navigationItem.titleView = [[UISearchBar alloc]init];
+    self.vb = [[UISearchBar alloc]init];
+    self.vb.text = @"steak";
+    self.navigationItem.titleView = self.vb;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Map" style:UIBarButtonItemStylePlain target:self action:@selector(onMapButton)];
     self.navigationItem.rightBarButtonItem.tintColor = [UIColor whiteColor];
     self.navigationItem.leftBarButtonItem.tintColor = [UIColor whiteColor];
@@ -116,6 +118,12 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 #pragma mark - Filter delegate methods
 
 -(void) filtersViewController:(FilterViewController *)filtersViewController didChangeFilters:(NSDictionary *)filters   {
+    NSString * re = filters[@"category_filter"] ;
+    re = [re stringByAppendingString:@","];
+    re = [re stringByAppendingString: self.vb.text];
+    
+    [filters setValue:re forKey:@"category_filter"];
+    
     [self fetchBusinessWithQuery:@"Restaurants" params:filters];
     
     NSLog(@"fire new network event %@",filters);
