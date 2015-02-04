@@ -284,6 +284,7 @@
         } else if ([filterGroup[@"type"] isEqual: @"multiple"]) {
             if ([self.categorySelection containsObject:currentRowOption[@"code"]]) {
                 [self.categorySelection removeObject:currentRowOption[@"code"]];
+
             } else {
                 [self.categorySelection addObject:currentRowOption[@"code"]];
             }

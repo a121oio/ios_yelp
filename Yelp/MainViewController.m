@@ -119,8 +119,11 @@ NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 
 -(void) filtersViewController:(FilterViewController *)filtersViewController didChangeFilters:(NSDictionary *)filters   {
     NSString * re = filters[@"category_filter"] ;
-    re = [re stringByAppendingString:@","];
-    re = [re stringByAppendingString: self.vb.text];
+    if ( ![self.vb.text  isEqual: @""]){
+        re = [re stringByAppendingString:@","];
+        re = [re stringByAppendingString: self.vb.text];
+    }
+    
     
     [filters setValue:re forKey:@"category_filter"];
     
