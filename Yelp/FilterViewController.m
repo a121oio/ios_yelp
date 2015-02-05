@@ -98,16 +98,19 @@
                                      style:UIBarButtonItemStyleBordered
                                      target:self
                                      action:@selector(cancel)];
-    UIBarButtonItem *searchButton = [[UIBarButtonItem alloc]
+    UIBarButtonItem *applyButton = [[UIBarButtonItem alloc]
                                      initWithTitle:@"Apply"
                                      style:UIBarButtonItemStyleBordered
                                      target:self
                                      action:@selector(onApplyButton)];
-    self.navigationController.navigationBar.barTintColor = [UIColor redColor];
+    self.navigationController.navigationBar.barTintColor =   [[UIColor alloc ]initWithRed:(CGFloat)0.76
+                                                                                    green:(CGFloat)0.07
+                                                                                     blue:(CGFloat)0.0
+                                                                                    alpha:(CGFloat)0.0];;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
     self.navigationItem.leftBarButtonItem = cancelButton;
-    self.navigationItem.rightBarButtonItem = searchButton;
+    self.navigationItem.rightBarButtonItem = applyButton;
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -224,7 +227,7 @@
              forControlEvents:UIControlEventValueChanged];
     } else if ([filterGroup[@"type"] isEqual: @"multiple"]) {
         // Show checkbox; pretend category is the only multiple option
-        if ([self.categorySelection containsObject:currentRowOption[@"value"]]) {
+        if ([self.categorySelection containsObject:currentRowOption[@"code"]]) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -259,6 +262,7 @@
 }
 
 - (id)findNameInDictionary:(NSArray *)array withValue:(NSString *)value {
+    
     id match = array[0][@"name"];
     for (NSDictionary *item in array) {
         if ([item[@"value"] isEqual:value]) {
@@ -268,6 +272,11 @@
     }
     return match;
 }
+
+
+
+
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *filterGroup = self.filtersOption[indexPath.section];

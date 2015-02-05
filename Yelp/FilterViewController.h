@@ -15,6 +15,7 @@
 
 -(void) filtersViewController:(FilterViewController *) filtersViewController didChangeFilters:(NSDictionary *)filters;
 
+
                                
 @end
                                
